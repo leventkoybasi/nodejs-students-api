@@ -1,0 +1,16 @@
+# .editorconfig dosyasının kök düzeyini belirtir.
+root = true
+
+# Tüm dosyalar için geçerli olacak ayarlar
+[*]
+# Satır sonlarında 'LF' (Line Feed) kullanılsın.
+end_of_line = lf
+
+# Karakter seti olarak 'utf-8' kullanılsın.
+charset = utf-8
+
+# Satır sonlarında gereksiz boşluklar silinsin.
+trim_trailing_whitespace = true
+
+# Dosyanın sonunda bir boş satır olsun.
+insert_final_newline = true
