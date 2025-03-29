@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import dotenv from 'dotenv';
-import { getAllStudents, getStudentById } from './services/students';
+import studentsRouter from './routers/students.js';
 
 dotenv.config();
 // eslint-disable-next-line no-undef
@@ -24,32 +24,7 @@ export const createServer = () => {
     }),
   );
 
-  app.get('/students', async (req, res) => {
-    const students = await getAllStudents();
-
-    res.status(200).json({
-      data: students,
-    });
-  });
-
-  app.get('/students/:studentId', async (req, res) => {
-    const { studentId } = req.params;
-    const student = await getStudentById(studentId);
-
-    if (!student) {
-      res.status(404).json({
-        message: 'Öğrenci bulunamadı',
-      });
-      return;
-    }
-    res.status(200).json({
-      data: student,
-    });
-  });
-
-  app.get('/', (req, res) => {
-    res.status(200).type('text').send('Hello Levent KOYBASI');
-  });
+  app.use('/students', studentsRouter);
 
   //handle 404 error
   app.use((req, res) => {
