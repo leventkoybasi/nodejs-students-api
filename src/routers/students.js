@@ -1,30 +1,14 @@
 import { Router } from 'express';
-import { getAllStudents, getStudentById } from '../services/students.js';
+import {
+  getStudentByIdController,
+  getStudentsController,
+} from '../controllers/students.js';
 
 const studentsRouter = Router();
 
-studentsRouter.get('/', async (req, res) => {
-  const students = await getAllStudents();
+// Starts the students router endpoint m
+studentsRouter.get('/', getStudentsController);
 
-  res.status(200).json({
-    data: students,
-  });
-});
-
-studentsRouter.get('/:studentId', async (req, res) => {
-  const { studentId } = req.params;
-  const student = await getStudentById(studentId);
-
-  if (!student) {
-    res.status(404).json({
-      message: 'Student not found',
-    });
-    return;
-  }
-
-  res.status(200).json({
-    data: student,
-  });
-});
+studentsRouter.get('/:studentId', getStudentByIdController);
 
 export default studentsRouter;
