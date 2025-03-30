@@ -1,3 +1,4 @@
+import createHttpError from 'http-errors';
 import { getAllStudents, getStudentById } from '../services/students.js';
 
 export const getStudentsController = async (req, res) => {
@@ -13,10 +14,12 @@ export const getStudentByIdController = async (req, res) => {
   const student = await getStudentById(studentId);
 
   if (!student) {
-    return res.status(404).send({
-      message: 'Student not found',
-      status: 404,
-    });
+    // return res.status(404).send({
+    //   message: 'Student not found',
+    //   status: 404,
+    // });
+
+    throw createHttpError(404, 'Student not found '); // This will be caught by the error handler middleware
   }
 
   res.status(200).send({
