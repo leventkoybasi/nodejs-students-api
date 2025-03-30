@@ -34,6 +34,18 @@ export const createServer = () => {
     });
   });
 
+  //Error handling middleware
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    // Log the error
+    req.log.error(err);
+    // Respond with a 500 status code
+    res.status(500).send({
+      message: err.message ?? 'Internal Server Error',
+      status: err.status ?? 500,
+    });
+  });
+
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
   });

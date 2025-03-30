@@ -1,4 +1,5 @@
-import { getAllStudents, getStudentById } from '../services/students';
+/* eslint-disable no-unused-vars */
+import { getAllStudents, getStudentById } from '../services/students.js';
 
 export const getStudentsController = async (req, res) => {
   const students = await getAllStudents();
@@ -8,18 +9,20 @@ export const getStudentsController = async (req, res) => {
   });
 };
 
-export const getStudentByIdController = async (req, res) => {
+export const getStudentByIdController = async (req, res, next) => {
   const { studentId } = req.params;
   const student = await getStudentById(studentId);
 
   if (!student) {
-    res.status(404).json({
+    return res.status(404).send({
       message: 'Student not found',
+      status: 404,
     });
-    return;
   }
 
-  res.status(200).json({
+  res.status(200).send({
+    message: 'Student found successfully',
+    status: 200,
     data: student,
   });
 };
