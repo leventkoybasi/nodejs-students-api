@@ -3,6 +3,8 @@ import cors from 'cors';
 import pino from 'pino-http';
 import dotenv from 'dotenv';
 import studentsRouter from './routers/students.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
 // eslint-disable-next-line no-undef
@@ -26,25 +28,11 @@ export const createServer = () => {
 
   app.use('/students', studentsRouter);
 
-  //handle 404 error
-  app.use((req, res) => {
-    res.status(404).send({
-      message: '404 Not found!',
-      status: 404,
-    });
-  });
+  //Not Found Handle Middleware (404 error)
+  app.use(notFoundHandler);
 
-  //Error handling middleware
-  // eslint-disable-next-line no-unused-vars
-  app.use((err, req, res, next) => {
-    // Log the error
-    req.log.error(err);
-    // Respond with a 500 status code
-    res.status(500).send({
-      message: err.message ?? 'Internal Server Error',
-      status: err.status ?? 500,
-    });
-  });
+  //Error Handling Middleware
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
