@@ -4,6 +4,7 @@ import {
   deleteStudentById,
   getAllStudents,
   getStudentById,
+  updateStudent,
 } from '../services/students.js';
 
 //get students
@@ -61,5 +62,50 @@ export const deleteStudentController = async (req, res) => {
     message: 'Student deleted successfully',
     status: 200,
     data: student,
+  });
+};
+
+//update student Put
+export const updatePutStudentController = async (req, res) => {
+  const { studentId } = req.params;
+  const newFields = req.body;
+
+  const updatedStudent = await updateStudent(studentId, newFields, {
+    upsert: true,
+  });
+
+  if (!updatedStudent) {
+    throw createHttpError(404, 'Student not found ');
+  }
+
+  const status = updatedStudent.isNew ? 201 : 200;
+  const message = updatedStudent.isNew
+    ? 'Student created successfully'
+    : 'Student updated successfully';
+
+  res.status(status).send({
+    message: message,
+    status: status,
+    data: updatedStudent.student,
+  });
+};
+
+//update student Patch
+export const updatePatchStudentController = async (req, res) => {
+  const { studentId } = req.params;
+  const newFields = req.body;
+
+  const updatedStudent = await updateStudent(studentId, newFields, {
+    upsert: false,
+  });
+
+  if (!updatedStudent) {
+    throw createHttpError(404, 'Student not found ');
+  }
+
+  res.status(200).send({
+    message: 'Student updated successfully',
+    status: 200,
+    data: updatedStudent.student,
   });
 };

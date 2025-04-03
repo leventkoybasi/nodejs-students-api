@@ -23,3 +23,26 @@ export const deleteStudentById = async (id) => {
   // });
   return student;
 };
+
+//update student
+
+export const updateStudent = async (studentId, newFields, options = {}) => {
+  const result = await StudentsCollection.findOneAndUpdate(
+    {
+      _id: studentId,
+    },
+    newFields,
+    {
+      new: true, // yeni olusturulan /updatelenen datayi bana return et
+      includeResultMetadata: true,
+      ...options, // options parametrelerini ekle
+    },
+  );
+  if (result.value) {
+    return {
+      student: result.value,
+      isNew: Boolean(result.lastErrorObject.upserted),
+    };
+  }
+  return null;
+};
