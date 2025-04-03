@@ -14,3 +14,12 @@ export const createStudent = async (student) => {
   const newStudent = await StudentsCollection.create(student);
   return newStudent;
 };
+
+export const deleteStudentById = async (id) => {
+  const student = await StudentsCollection.findByIdAndDelete(id); //best practise
+  // const student = await StudentsCollection.findOneAndDelete({
+  //   _id: id,
+  //   // name: 'John Doe', //Burda baska filtrelerde kullanilir ilkini bulur ve siler id daha unique
+  // });
+  return student;
+};

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createStudentController,
+  deleteStudentController,
   getStudentByIdController,
   getStudentsController,
 } from '../controllers/students.js';
@@ -12,5 +13,6 @@ const studentsRouter = Router();
 studentsRouter.get('/', ctrlWrapper(getStudentsController));
 studentsRouter.get('/:studentId', ctrlWrapper(getStudentByIdController));
 studentsRouter.post('/', ctrlWrapper(createStudentController));
+studentsRouter.delete('/:studentId', ctrlWrapper(deleteStudentController));
 
 export default studentsRouter;

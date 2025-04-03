@@ -10,8 +10,8 @@ export const errorHandler = (err, req, res, next) => {
     });
   }
   res.status(500).send({
-    // message: err.message ?? 'Internal Server Error',
-    message: 'Internal Server Error',
+    message: err.message ?? 'Internal Server Error',
+    // message: 'Internal Server Error',
     status: 500,
   });
 };
