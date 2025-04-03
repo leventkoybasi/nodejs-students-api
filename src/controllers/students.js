@@ -1,6 +1,11 @@
 import createHttpError from 'http-errors';
-import { getAllStudents, getStudentById } from '../services/students.js';
+import {
+  createStudent,
+  getAllStudents,
+  getStudentById,
+} from '../services/students.js';
 
+//get students
 export const getStudentsController = async (req, res) => {
   const students = await getAllStudents();
 
@@ -26,5 +31,18 @@ export const getStudentByIdController = async (req, res) => {
     message: 'Student found successfully',
     status: 200,
     data: student,
+  });
+};
+
+//create student post endpoint
+export const createStudentController = async (req, res) => {
+  const newStudent = req.body;
+  const createdStudent = await createStudent(newStudent);
+
+  res.status(201).send({
+    message: 'Student created successfully',
+    status: 201,
+    // data: req.body, //new student request'in body'sinde...
+    data: createdStudent, //created student'ı döndürdük
   });
 };

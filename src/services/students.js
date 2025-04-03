@@ -9,3 +9,8 @@ export const getStudentById = async (id) => {
   const student = await StudentsCollection.findById(id);
   return student;
 };
+
+export const createStudent = async (student) => {
+  const newStudent = await StudentsCollection.create(student);
+  return newStudent;
+};

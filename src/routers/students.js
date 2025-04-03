@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  createStudentController,
   getStudentByIdController,
   getStudentsController,
 } from '../controllers/students.js';
@@ -10,5 +11,6 @@ const studentsRouter = Router();
 // Starts the students router endpoint
 studentsRouter.get('/', ctrlWrapper(getStudentsController));
 studentsRouter.get('/:studentId', ctrlWrapper(getStudentByIdController));
+studentsRouter.post('/', ctrlWrapper(createStudentController));
 
 export default studentsRouter;

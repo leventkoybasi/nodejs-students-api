@@ -25,7 +25,7 @@ export const createServer = () => {
       },
     }),
   );
-
+  //students endpoint
   app.use('/students', studentsRouter);
 
   //Not Found Handle Middleware (404 error)
