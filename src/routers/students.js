@@ -8,13 +8,19 @@ import {
   updatePutStudentController,
 } from '../controllers/students.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { validatorSchema } from '../validators/student.js';
+import { validateBody } from '../middlewares/validatorBody.js';
 
 const studentsRouter = Router();
 
 // Starts the students router endpoint
 studentsRouter.get('/', ctrlWrapper(getStudentsController));
 studentsRouter.get('/:studentId', ctrlWrapper(getStudentByIdController));
-studentsRouter.post('/', ctrlWrapper(createStudentController));
+studentsRouter.post(
+  '/',
+  validateBody(validatorSchema),
+  ctrlWrapper(createStudentController),
+);
 studentsRouter.delete('/:studentId', ctrlWrapper(deleteStudentController));
 // upsert => update or instert
 studentsRouter.put('/:studentId', ctrlWrapper(updatePutStudentController)); // edit whole student object with put method

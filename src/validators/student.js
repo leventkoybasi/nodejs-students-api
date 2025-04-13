@@ -12,7 +12,7 @@ export const validatorSchema = Joi.object({
   avgMark: Joi.number().min(2).max(12).required(),
   onDuty: Joi.boolean().required(),
 });
-
+/*
 const exampleStudemt = {
   name: 'Levent',
   age: 6,
@@ -28,3 +28,5 @@ const validationResult = validatorSchema.validate(exampleStudemt, {
 console.log(validationResult.error);
 console.log(validationResult.value);
 console.log(validationResult.warning);
+
+*/
