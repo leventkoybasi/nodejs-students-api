@@ -6,12 +6,18 @@ import {
   getStudentById,
   updateStudent,
 } from '../services/students.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 
 //get students
 export const getStudentsController = async (req, res) => {
-  const students = await getAllStudents();
+  const queryParams = req.query;
+  const { page, perPage } = parsePaginationParams(queryParams);
+
+  const students = await getAllStudents({ page, perPage });
 
   res.status(200).json({
+    message: 'Students fetched successfully',
+    status: 200,
     data: students,
   });
 };

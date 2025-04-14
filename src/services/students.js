@@ -1,8 +1,17 @@
 import { StudentsCollection } from '../db/models/student.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
-export const getAllStudents = async () => {
-  const students = await StudentsCollection.find();
-  return students;
+export const getAllStudents = async ({ page = 1, perPage = 10 }) => {
+  const students = await StudentsCollection.find()
+    .skip((page - 1) * perPage) // page=1 ise skip degeri 0'dan baslar. perPage=10 oldugundan 0 ile 9 arasinda gosterir
+    .limit(perPage);
+  // const students = await StudentsCollection.find(); //pagination olmadan
+  const totalCount = await StudentsCollection.countDocuments();
+  const pagination = calculatePaginationData(totalCount, page, perPage);
+  return {
+    data: students,
+    pagination,
+  };
 };
 
 export const getStudentById = async (id) => {
