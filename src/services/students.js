@@ -7,14 +7,37 @@ export const getAllStudents = async ({
   perPage = 10,
   sortBy = '_id',
   sortOrder = SORT_ORDER.ASC,
+  filter = {},
 }) => {
-  const students = await StudentsCollection.find()
+  const studentQuery = StudentsCollection.find();
+
+  if (filter.maxAge) {
+    studentQuery.where('age').lte(filter.maxAge); // lte <=
+  }
+  if (filter.minAge) {
+    studentQuery.where('age').gte(filter.minAge); // gte >=
+  }
+  if (filter.maxAvgMark) {
+    studentQuery.where('avgMark').lte(filter.maxAvgMark); // lte <=
+  }
+  if (filter.minAvgMark) {
+    studentQuery.where('avgMark').gte(filter.minAvgMark); // gte >=
+  }
+  if (filter.gender) {
+    (await studentQuery.where('gender')).in(filter.gender); // in
+  }
+
+  const totalCount = await StudentsCollection.find()
+    .merge(studentQuery)
+    .countDocuments(); // toplam kayit sayisini al
+
+  const students = await studentQuery
     .skip((page - 1) * perPage) // page=1 ise skip degeri 0'dan baslar. perPage=10 oldugundan 0 ile 9 arasinda gosterir
     .limit(perPage)
-    .sort({ [sortBy]: sortOrder }); // sort({name: "asc"}) gibi
+    .sort({ [sortBy]: sortOrder }) // sort({name: "asc"}) gibi
+    .exec(); // exec() ile veritabanina sorgu gonderiyoruz
 
   // const students = await StudentsCollection.find(); //pagination olmadan
-  const totalCount = await StudentsCollection.countDocuments();
   const pagination = calculatePaginationData(totalCount, page, perPage);
   return {
     data: students,
