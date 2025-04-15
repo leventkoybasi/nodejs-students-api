@@ -7,13 +7,16 @@ import {
   updateStudent,
 } from '../services/students.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
 
 //get students
 export const getStudentsController = async (req, res) => {
   const queryParams = req.query;
   const { page, perPage } = parsePaginationParams(queryParams);
+  const { sortBy, sortOrder } = parseSortParams(queryParams);
 
-  const students = await getAllStudents({ page, perPage });
+  const students = await getAllStudents({ page, perPage, sortBy, sortOrder });
+  // const students = await getAllStudents(); //pagination olmadan
 
   res.status(200).json({
     message: 'Students fetched successfully',

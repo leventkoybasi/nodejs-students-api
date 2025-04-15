@@ -1,10 +1,18 @@
+import { SORT_ORDER } from '../constants/index.js';
 import { StudentsCollection } from '../db/models/student.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
-export const getAllStudents = async ({ page = 1, perPage = 10 }) => {
+export const getAllStudents = async ({
+  page = 1,
+  perPage = 10,
+  sortBy = '_id',
+  sortOrder = SORT_ORDER.ASC,
+}) => {
   const students = await StudentsCollection.find()
     .skip((page - 1) * perPage) // page=1 ise skip degeri 0'dan baslar. perPage=10 oldugundan 0 ile 9 arasinda gosterir
-    .limit(perPage);
+    .limit(perPage)
+    .sort({ [sortBy]: sortOrder }); // sort({name: "asc"}) gibi
+
   // const students = await StudentsCollection.find(); //pagination olmadan
   const totalCount = await StudentsCollection.countDocuments();
   const pagination = calculatePaginationData(totalCount, page, perPage);
