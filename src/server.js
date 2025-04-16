@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import studentsRouter from './routers/students.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
+import authRouter from './routers/auth.js';
 
 dotenv.config();
 // eslint-disable-next-line no-undef
@@ -27,6 +28,7 @@ export const createServer = () => {
   );
   //students endpoint
   app.use('/students', studentsRouter);
+  app.use('/auth', authRouter);
 
   //Not Found Handle Middleware (404 error)
   app.use(notFoundHandler);
