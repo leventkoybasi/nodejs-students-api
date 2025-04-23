@@ -12,17 +12,24 @@ export const registerUserController = async (req, res) => {
   });
 };
 
-export const loginUserController = async (req, res, next) => {
-  try {
-    console.log('Request body:', req.body); // Gelen veriyi kontrol edin
-    const user = await loginUser(req.body);
-    res.status(200).send({
-      message: 'User logged in successfully',
-      status: 200,
-      data: user,
-    });
-  } catch (error) {
-    console.error('Error in loginUserController:', error); // Hata detaylarını loglayın
-    next(error);
-  }
+export const loginUserController = async (req, res) => {
+  const session = await loginUser(req.body);
+
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+
+  res.status(200).send({
+    message: 'User logged in successfully and session created',
+    status: 200,
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
 };

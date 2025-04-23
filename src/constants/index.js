@@ -13,3 +13,6 @@ export const STUDENT_SORTABLE_FIELDS = [
   'createdAt',
   'updatedAt',
 ];
+
+export const FIFTEEN_MINUITES = 15 * 60 * 1000; // for access token
+export const ONE_DAY = 24 * 60 * 60 * 1000; // for refresh token
