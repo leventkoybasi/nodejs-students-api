@@ -50,3 +50,7 @@ export const loginUser = async (userData) => {
 
   return session;
 };
+
+export const logoutUser = async (sessionId) => {
+  await SessionsCollection.findByIdAndDelete(sessionId);
+};
