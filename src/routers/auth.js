@@ -5,12 +5,13 @@ import { ctrlWrapper } from '../utils/ctrlWrapper';
 import {
   loginUserController,
   logoutUserController,
+  refreshUserController,
   registerUserController,
 } from '../controllers/auth.js';
 
 const authRouter = Router();
 
-// Starts with '/auth' endpoint
+//  Starts with '/auth' endpoint
 
 authRouter.post(
   '/register',
@@ -25,4 +26,7 @@ authRouter.post(
 );
 
 authRouter.post('/logout', ctrlWrapper(logoutUserController));
+
+authRouter.post('/refresh', ctrlWrapper(refreshUserController));
+
 export default authRouter;

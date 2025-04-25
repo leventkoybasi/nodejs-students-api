@@ -54,3 +54,38 @@ export const loginUser = async (userData) => {
 export const logoutUser = async (sessionId) => {
   await SessionsCollection.findByIdAndDelete(sessionId);
 };
+
+export const refreshUser = async ({ refreshToken, sessionId }) => {
+  const session = await SessionsCollection.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
+
+  if (!session) {
+    throw createHttpError(404, 'Session not found');
+  }
+
+  if (session.refreshTokenValidUntil < new Date()) {
+    throw createHttpError(401, 'Refresh token expired');
+  }
+
+  // Eski oturumu sil
+  await SessionsCollection.findByIdAndDelete(sessionId);
+
+  // Yeni tokenlar oluştur
+  const accessTokenNew = randomBytes(30).toString('base64');
+  const refreshTokenNew = randomBytes(30).toString('base64');
+  const accessTokenValidUntilNew = new Date(Date.now() + FIFTEEN_MINUITES); // 15 minutes
+  const refreshTokenValidUntilNew = new Date(Date.now() + ONE_DAY); // 7 days
+
+  // Yeni oturumu oluştur
+  const sessionNew = await SessionsCollection.create({
+    userId: session.userId,
+    accessToken: accessTokenNew,
+    refreshToken: refreshTokenNew,
+    accessTokenValidUntil: accessTokenValidUntilNew,
+    refreshTokenValidUntil: refreshTokenValidUntilNew,
+  });
+
+  return sessionNew;
+};
