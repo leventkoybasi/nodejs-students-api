@@ -14,10 +14,13 @@ import {
 } from '../validators/student.js';
 import { validateBody } from '../middlewares/validatorBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { authorize } from '../middlewares/authorize.js';
 
 const studentsRouter = Router();
 
-// Starts the students router endpoint
+studentsRouter.use(authorize); // Protect all routes with authorization middleware
+
+// Starts with '/students' endpoint
 studentsRouter.get('/', ctrlWrapper(getStudentsController));
 studentsRouter.get(
   '/:studentId',
