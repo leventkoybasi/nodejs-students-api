@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 import { randomBytes } from 'node:crypto';
 import { FIFTEEN_MINUITES, ONE_DAY } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/sessions.js';
+import { sendMail } from '../utils/sendMail.js';
+import { env } from '../utils/env.js';
 
 export const registerUser = async (userData) => {
   const { email, password } = userData;
@@ -95,5 +97,34 @@ export const requestResetEmnail = async (email) => {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
+
+  await sendMail({
+    from: env('SMTP_FROM'),
+    to: 'leventkoybasi@hotmail.com',
+    subject: 'Password Reset Request - NodeJS Auth',
+    html: `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e6e6e6; border-radius: 5px;">
+      <h1 style="color: #333; text-align: center;">Password Reset Request</h1>
+      <p>Hi ${user.name},</p>
+      <p>We received a request to reset your password. You can reset it by clicking the button below:</p>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="http://localhost:3000/auth/request-reset-password?token=${user._id}"
+           style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+          Reset Password
+        </a>
+      </div>
+
+      <p>If you didn't request a password reset, please ignore this email.</p>
+      <p>This link will expire in 1 hour for security reasons.</p>
+      <hr style="border: 0; border-top: 1px solid #e6e6e6; margin: 20px 0;">
+      <p style="color: #777; font-size: 12px; text-align: center;">
+        If you have any questions, feel free to contact us.<br>
+        Best regards,<br>
+        The NodeJS Auth Team
+      </p>
+    </div>
+    `,
+  });
   return true;
 };
