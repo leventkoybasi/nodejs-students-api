@@ -3,6 +3,7 @@ import {
   logoutUser,
   refreshUser,
   registerUser,
+  requestResetEmnail,
 } from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
@@ -74,4 +75,21 @@ export const refreshUserController = async (req, res) => {
       accessToken: session.accessToken,
     },
   });
+};
+
+export const requestResetEmailController = async (req, res) => {
+  const { email } = req.body;
+  const result = await requestResetEmnail(email);
+  console.log('RESULT:', result);
+  if (result) {
+    res.status(200).send({
+      message: 'Reset email sent successfully',
+      status: 200,
+    });
+  } else {
+    res.status(500).send({
+      message: 'Error sending reset email',
+      status: 500,
+    });
+  }
 };

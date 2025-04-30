@@ -89,3 +89,11 @@ export const refreshUser = async ({ refreshToken, sessionId }) => {
 
   return sessionNew;
 };
+
+export const requestResetEmnail = async (email) => {
+  const user = await UsersCollection.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+  return true;
+};
