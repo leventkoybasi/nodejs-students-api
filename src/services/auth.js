@@ -7,6 +7,9 @@ import { SessionsCollection } from '../db/models/sessions.js';
 import { sendMail } from '../utils/sendMail.js';
 import { env } from '../utils/env.js';
 import jwt from 'jsonwebtoken';
+import path from 'path';
+import fs from 'fs/promises';
+import handlebars from 'handlebars';
 
 export const registerUser = async (userData) => {
   const { email, password } = userData;
@@ -98,7 +101,7 @@ export const requestResetEmnail = async (email) => {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
-
+  //TOKEN OLUSTURMA
   const resetToken = jwt.sign(
     {
       sub: user._id,
@@ -110,19 +113,22 @@ export const requestResetEmnail = async (email) => {
     },
   );
 
+  // eslint-disable-next-line no-undef
+  const TEMPLATE_DIR = path.join(process.cwd(), 'src', 'templates');
+  const templatePath = path.join(TEMPLATE_DIR, 'reset-password-mail.html');
+  const templateContent = await fs.readFile(templatePath, 'utf-8');
+  const temmplate = handlebars.compile(templateContent.toString());
+  const htmlContent = temmplate({
+    name: user.name,
+    url: `http://localhost:3000/auth/reset-password?token=${resetToken}`,
+  });
+
+  //EMAIL GONDERME
   await sendMail({
     from: env('SMTP_FROM'),
     to: user.email,
-    subject: 'Welcome to Reset Pssword Mail',
-    html: `
-    <h1>Password Reset Request</h1>
-    <p>Click the link below to reset your password:</p>
-    <a href="http://localhost:3000/auth/reset-password?token=${resetToken}">Reset Password</a>
-    <!-- token URL-safe hale getirildi -->
-    <p>If you did not request this, please ignore this email.</p>
-    <!-- Eksik HTML kapanış etiketi düzeltildi -->
-    <p>For any inquiries, please contact us at example@company.com</p>
-  `,
+    subject: 'Sifre Sifirlama Maili',
+    html: htmlContent,
   });
   return true;
 };
