@@ -6,6 +6,7 @@ import { FIFTEEN_MINUITES, ONE_DAY } from '../constants/index.js';
 import { SessionsCollection } from '../db/models/sessions.js';
 import { sendMail } from '../utils/sendMail.js';
 import { env } from '../utils/env.js';
+import jwt from 'jsonwebtoken';
 
 export const registerUser = async (userData) => {
   const { email, password } = userData;
@@ -98,33 +99,57 @@ export const requestResetEmnail = async (email) => {
     throw createHttpError(404, 'User not found');
   }
 
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email: user.email,
+    },
+    env('JWT_SECRET'),
+    {
+      expiresIn: '15m',
+    },
+  );
+
   await sendMail({
     from: env('SMTP_FROM'),
-    to: 'leventkoybasi@hotmail.com',
-    subject: 'Password Reset Request - NodeJS Auth',
+    to: user.email,
+    subject: 'Welcome to Reset Pssword Mail',
     html: `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e6e6e6; border-radius: 5px;">
-      <h1 style="color: #333; text-align: center;">Password Reset Request</h1>
-      <p>Hi ${user.name},</p>
-      <p>We received a request to reset your password. You can reset it by clicking the button below:</p>
-
-      <div style="text-align: center; margin: 30px 0;">
-        <a href="http://localhost:3000/auth/request-reset-password?token=${user._id}"
-           style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">
-          Reset Password
-        </a>
-      </div>
-
-      <p>If you didn't request a password reset, please ignore this email.</p>
-      <p>This link will expire in 1 hour for security reasons.</p>
-      <hr style="border: 0; border-top: 1px solid #e6e6e6; margin: 20px 0;">
-      <p style="color: #777; font-size: 12px; text-align: center;">
-        If you have any questions, feel free to contact us.<br>
-        Best regards,<br>
-        The NodeJS Auth Team
-      </p>
-    </div>
-    `,
+    <h1>Password Reset Request</h1>
+    <p>Click the link below to reset your password:</p>
+    <a href="http://localhost:3000/auth/reset-password?token=${resetToken}">Reset Password</a>
+    <!-- token URL-safe hale getirildi -->
+    <p>If you did not request this, please ignore this email.</p>
+    <!-- Eksik HTML kapanış etiketi düzeltildi -->
+    <p>For any inquiries, please contact us at example@company.com</p>
+  `,
   });
+  return true;
+};
+
+export const resetPassword = async (token, newPassword) => {
+  const jwtSecret = env('JWT_SECRET');
+
+  const decodedToken = jwt.verify(token, jwtSecret);
+
+  if (!decodedToken) {
+    throw createHttpError(401, 'Invalid token');
+  }
+
+  const userId = decodedToken.sub;
+  const userEmail = decodedToken.email;
+
+  const user = await UsersCollection.findOne({ _id: userId, email: userEmail });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await UsersCollection.findByIdAndUpdate(userId, {
+    password: hashedPassword,
+  });
+
   return true;
 };
