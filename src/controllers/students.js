@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import createHttpError from 'http-errors';
 import {
   createStudent,
@@ -9,6 +10,7 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToCloudinary } from '../utils/createFileToCloudinary.js';
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 //get students
@@ -61,7 +63,11 @@ export const createStudentController = async (req, res) => {
   let photoUrl = null;
 
   if (photo) {
-    photoUrl = await saveFileToUploadDir(photo);
+    if (process.env.ENABLE_CLOUDINARY === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   if (photo) {
