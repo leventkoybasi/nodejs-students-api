@@ -56,6 +56,15 @@ export const getStudentByIdController = async (req, res) => {
 //create student post endpoint
 export const createStudentController = async (req, res) => {
   const newStudent = req.body;
+  const photo = req.file;
+
+  console.log('Request body:', req.body);
+  console.log('Uploaded file:', req.file);
+
+  if (photo) {
+    newStudent.photo = photo.filename;
+  }
+
   const createdStudent = await createStudent(newStudent);
 
   res.status(201).send({

@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+import path from 'path';
+
 export const SORT_ORDER = {
   ASC: 'asc',
   DESC: 'desc',
@@ -21,3 +24,6 @@ export const USER_ROLES = {
   TEACHER: 'teacher',
   PARENT: 'parent',
 };
+
+export const TEMP_FOLDER = path.join(process.cwd(), 'temp');
+export const UPLOAD_FOLDER = path.join(process.cwd(), 'uploads');
