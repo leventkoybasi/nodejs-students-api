@@ -118,9 +118,10 @@ export const requestResetEmnail = async (email) => {
   const templatePath = path.join(TEMPLATE_DIR, 'reset-password-mail.html');
   const templateContent = await fs.readFile(templatePath, 'utf-8');
   const temmplate = handlebars.compile(templateContent.toString());
+  const appDomain = env('APP_DOMAIN');
   const htmlContent = temmplate({
     name: user.name,
-    url: `http://localhost:3000/auth/reset-password?token=${resetToken}`,
+    url: `${appDomain}/auth/reset-password?token=${resetToken}`,
   });
 
   //EMAIL GONDERME

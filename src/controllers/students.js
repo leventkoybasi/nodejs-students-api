@@ -9,6 +9,7 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 //get students
 export const getStudentsController = async (req, res) => {
@@ -57,15 +58,20 @@ export const getStudentByIdController = async (req, res) => {
 export const createStudentController = async (req, res) => {
   const newStudent = req.body;
   const photo = req.file;
+  let photoUrl = null;
 
-  console.log('Request body:', req.body);
-  console.log('Uploaded file:', req.file);
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
 
   if (photo) {
     newStudent.photo = photo.filename;
   }
 
-  const createdStudent = await createStudent(newStudent);
+  const createdStudent = await createStudent({
+    ...newStudent,
+    photo: photoUrl,
+  });
 
   res.status(201).send({
     message: 'Student created successfully',
