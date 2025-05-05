@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken';
 import path from 'path';
 import fs from 'fs/promises';
 import handlebars from 'handlebars';
+import { validateCode } from '../utils/googleOAuth.js';
 
 export const registerUser = async (userData) => {
   const { email, password } = userData;
@@ -159,4 +160,37 @@ export const resetPassword = async (token, newPassword) => {
   });
 
   return true;
+};
+
+export const loginOrRegisterWithGoogle = async (code) => {
+  const userFromGoogle = await validateCode(code);
+
+  let user = await UsersCollection.findOne({
+    email: userFromGoogle.email,
+  });
+
+  if (!user) {
+    user = await UsersCollection.create({
+      name: userFromGoogle.name,
+      email: userFromGoogle.email,
+      password: randomBytes(30).toString('base64'),
+    });
+  }
+
+  await SessionsCollection.deleteMany({ userId: user._id });
+
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+  const accessTokenValidUntil = new Date(Date.now() + FIFTEEN_MINUITES); // 15 minutes
+  const refreshTokenValidUntil = new Date(Date.now() + ONE_DAY); // 7 days
+
+  const session = await SessionsCollection.create({
+    userId: user._id,
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil,
+    refreshTokenValidUntil,
+  });
+
+  return session;
 };

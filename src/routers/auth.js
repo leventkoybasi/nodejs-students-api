@@ -3,6 +3,7 @@ import { validateBody } from '../middlewares/validatorBody.js';
 import { createUserSchema, loginUserSchema } from '../validators/user.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
+  getGoogleAuthUrlController,
   loginUserController,
   logoutUserController,
   refreshUserController,
@@ -37,5 +38,7 @@ authRouter.post(
 );
 
 authRouter.post('/reset-password', ctrlWrapper(resetPasswordController));
+
+authRouter.get('/google', ctrlWrapper(getGoogleAuthUrlController));
 
 export default authRouter;

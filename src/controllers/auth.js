@@ -1,4 +1,5 @@
 import {
+  loginOrRegisterWithGoogle,
   loginUser,
   logoutUser,
   refreshUser,
@@ -6,6 +7,7 @@ import {
   requestResetEmnail,
   resetPassword,
 } from '../services/auth.js';
+import { generateGoogleAuthUrl } from '../utils/googleOAuth.js';
 
 export const registerUserController = async (req, res) => {
   const userData = req.body;
@@ -111,4 +113,39 @@ export const resetPasswordController = async (req, res) => {
       status: 500,
     });
   }
+};
+
+export const getGoogleAuthUrlController = async (req, res) => {
+  const url = await generateGoogleAuthUrl();
+
+  return res.status(200).send({
+    message: 'Google auth url generated successfully',
+    status: 200,
+    data: {
+      url,
+    },
+  });
+};
+
+export const googleAuthController = async (req, res) => {
+  const { code } = req.query;
+
+  const session = await loginOrRegisterWithGoogle(code);
+
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: session.refreshTokenValidUntil,
+  });
+
+  res.status(200).send({
+    message: 'Usder logged in successfully and session created with Google',
+    status: 200,
+    data: {
+      accessToken: session.accessToken,
+    },
+  });
 };
