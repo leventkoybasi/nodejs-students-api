@@ -21,7 +21,7 @@ import { upload } from '../middlewares/upload.js';
 
 // Starts with '/students' endpoint
 const studentsRouter = Router();
-// studentsRouter.use(authorize); // Protect all routes with authorization middleware
+studentsRouter.use(authorize); // Protect all routes with authorization middleware
 
 // get students -> Tum Ogrenciler
 // ! Only Teacher
@@ -44,9 +44,9 @@ studentsRouter.get(
 // ! Only Teacher
 studentsRouter.post(
   '/',
-  // checkRoles(USER_ROLES.TEACHER),
+  checkRoles(USER_ROLES.TEACHER),
   upload.single('photo'), // single file upload
-  // validateBody(createStudentSchema),
+  validateBody(createStudentSchema),
   ctrlWrapper(createStudentController),
 );
 // delete student -> Ogrenci sil

@@ -1,0 +1,40 @@
+tags:
+  - Auth
+summary: Refresh user session
+operationId: refreshUser
+description: Refresh access token using refresh token and sessionId cookies
+security:
+  - bearerAuth: []
+responses:
+  '200':
+    description: User refresh flow successfully completed
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: User refresh flow successfully completed
+            status:
+              type: integer
+              example: 200
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  '401':
+    description: Invalid or expired refresh token
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Refresh token expired
+            status:
+              type: integer
+              example: 401

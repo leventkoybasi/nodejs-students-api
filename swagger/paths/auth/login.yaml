@@ -1,0 +1,70 @@
+tags:
+  - Auth
+summary: Login user
+operationId: loginUser
+description: Login with email and password
+security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            format: email
+            example: john@example.com
+          password:
+            type: string
+            format: password
+            example: password123
+responses:
+  '200':
+    description: User logged in successfully and session created
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: User logged in successfully and session created
+            status:
+              type: integer
+              example: 200
+            data:
+              type: object
+              properties:
+                accessToken:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  '401':
+    description: Invalid credentials
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Invalid password
+            status:
+              type: integer
+              example: 401
+  '404':
+    description: User not found
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: User not found
+            status:
+              type: integer
+              example: 404

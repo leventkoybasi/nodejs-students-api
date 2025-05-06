@@ -1,0 +1,62 @@
+tags:
+  - Auth
+summary: Register a new user
+operationId: registerUser
+description: Register a new user (teacher or parent)
+security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - name
+          - email
+          - password
+          - role
+        properties:
+          name:
+            type: string
+            example: John Doe
+          email:
+            type: string
+            format: email
+            example: john@example.com
+          password:
+            type: string
+            format: password
+            example: password123
+          role:
+            type: string
+            enum: [teacher, parent]
+            example: parent
+responses:
+  '201':
+    description: User registered successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: User registered successfully
+            status:
+              type: integer
+              example: 201
+            user:
+              type: object
+  '409':
+    description: User already exists
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: User already exists
+            status:
+              type: integer
+              example: 409

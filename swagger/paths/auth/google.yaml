@@ -1,0 +1,26 @@
+tags:
+  - Auth
+summary: Get Google OAuth URL
+operationId: getGoogleAuthUrl
+description: Get the Google OAuth URL for authentication
+security: [] # Eğer bu endpoint public ise boş array bırakabilirsiniz
+responses:
+  '200':
+    description: Google auth url generated successfully
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Google auth url generated successfully
+            status:
+              type: integer
+              example: 200
+            data:
+              type: object
+              properties:
+                url:
+                  type: string
+                  example: 'https://accounts.google.com/o/oauth2/auth?...'
